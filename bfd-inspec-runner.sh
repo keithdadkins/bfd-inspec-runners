@@ -13,12 +13,12 @@ BFD_INSPEC_SSH_KEY_PATH=${BFD_INSPEC_SSH_KEY_PATH:-''}
 # inspec profiles
 PROFILES=(
   aws_foundations_cis
-  aws_s3_baseline
   aws_rds_infra_cis
   aws_rds_postgres_9_stig
+  aws_s3_baseline
+  java_jre_8_stig
   red_hat_7_stig
   red_hat_cve_scan
-  java_jre_8_stig
   all
   quit
 )
@@ -92,40 +92,26 @@ run_aws_foundations_cis(){
   $cmd
 }
 
-run_aws_s3_baseline(){
-  echo "**this will take hours to run**"
-  date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="inspec exec $aws_s3_baseline_path -t aws:// --input-file $aws_s3_baseline_path/attributes.yml --reporter=cli json:./results/aws_s3_baseline_${date_stamp}.json"
-  $cmd
-}
-
 run_aws_rds_infra_cis(){
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --controls=aws-rds-baseline-4 --reporter=cli json:./results/aws_rds_infra_${date_stamp}.json"
+  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --controls=aws-rds-baseline-4 --reporter=cli json:./results/aws_rds_infra_cis_${date_stamp}.json"
   echo "running -> $cmd"
   $cmd
 }
 
 run_aws_rds_postgres_9_stig(){
-  echo "WIP. attributes.yml needs work"
+  # echo "WIP. attributes.yml needs work"
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="inspec exec $aws_rds_postgres_9_stig_path -t aws:// --input-file $aws_rds_postgres_9_stig_path/attributes.yml --reporter=cli json:./results/aws_rds_postgres_9_stig_${date_stamp}.json"
-  echo "NOT RUNNING: $cmd"
-}
-
-run_red_hat_7_stig(){
-  # prompt for an ip address
-  set_target
-  date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="sudo inspec exec $red_hat_7_stig_path --input-file $red_hat_7_stig_path/attributes.yml --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_7_stig_${selected_env}_${date_stamp}.json"
+  echo "running -> $cmd"
   $cmd
 }
 
-run_red_hat_cve_scan(){
-  # prompt for an ip address
-  set_target
+run_aws_s3_baseline(){
+  echo "**this will take hours to run**"
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="sudo inspec exec $red_hat_cve_scan_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_cve_scan_${selected_env}_${date_stamp}.json"
+  cmd="inspec exec $aws_s3_baseline_path -t aws:// --input-file $aws_s3_baseline_path/attributes.yml --reporter=cli json:./results/aws_s3_baseline_${date_stamp}.json"
+  echo "running -> $cmd"
   $cmd
 }
 
@@ -133,7 +119,26 @@ run_java_jre_8_stig(){
   # prompt for an ip address
   set_target
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="sudo inspec exec $java_jre_8_stig_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/java_jre_8_stig_${selected_env}_${date_stamp}.json"
+  cmd="inspec exec $java_jre_8_stig_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/java_jre_8_stig_${selected_env}_${date_stamp}.json"
+  echo "running -> $cmd"
+  $cmd
+}
+
+run_red_hat_7_stig(){
+  # prompt for an ip address
+  set_target
+  date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
+  cmd="inspec exec $red_hat_7_stig_path --input-file $red_hat_7_stig_path/attributes.yml --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_7_stig_${selected_env}_${date_stamp}.json"
+  echo "running -> $cmd"
+  $cmd
+}
+
+run_red_hat_cve_scan(){
+  # prompt for an ip address
+  set_target
+  date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
+  cmd="inspec exec $red_hat_cve_scan_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_cve_scan_${selected_env}_${date_stamp}.json"
+  echo "running -> $cmd"
   $cmd
 }
 
