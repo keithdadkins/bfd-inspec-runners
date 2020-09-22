@@ -9,6 +9,8 @@ cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay**
 cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay**
 cms-ars-3.1-moderate-oracle-java-runtime-environment-8-unix-stig-overlay**
 cms-ars-3.1-moderate-red-hat-enterprise-linux-7-stig-overlay**
+cms-ars-3.1-moderate-docker-ce-cis-overlay**
+docker-ce-cis-baseline**
 heimdall**
 inspec-aws**
 inspec-profile-disa_stig-el7**

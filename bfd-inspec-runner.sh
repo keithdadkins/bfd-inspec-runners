@@ -16,6 +16,7 @@ PROFILES=(
   aws_rds_infra_cis
   aws_rds_postgres_9_stig
   aws_s3_baseline
+  docker_ce_cis
   java_jre_8_stig
   red_hat_7_stig
   red_hat_cve_scan
@@ -24,12 +25,12 @@ PROFILES=(
 )
 aws_foundations_cis_path="./cms-ars-3.1-moderate-aws-foundations-cis-overlay"
 aws_s3_baseline_path="./aws-s3-baseline"
-# aws_rds_infra_cis_path="./cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay" # overlay is broken
-aws_rds_infra_cis_path="./aws-rds-infrastructure-cis-baseline"
+aws_rds_infra_cis_path="./cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay"
 aws_rds_postgres_9_stig_path="./cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay"
 red_hat_7_stig_path="./cms-ars-3.1-moderate-red-hat-enterprise-linux-7-stig-overlay"
 red_hat_cve_scan_path="./redhat-enterprise-linux-cve-vulnerability-scan-baseline"
 java_jre_8_stig_path="./oracle-java-runtime-environment-8-unix-stig-baseline"
+docker_ce_cis_path="./cms-ars-3.1-moderate-docker-ce-cis-overlay"
 
 # globals
 selected_env=
@@ -94,13 +95,12 @@ run_aws_foundations_cis(){
 
 run_aws_rds_infra_cis(){
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --controls=aws-rds-baseline-4 --reporter=cli json:./results/aws_rds_infra_cis_${date_stamp}.json"
+  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --reporter=cli json:./results/aws_rds_infra_cis_${date_stamp}.json"
   echo "running -> $cmd"
   $cmd
 }
 
 run_aws_rds_postgres_9_stig(){
-  # echo "WIP. attributes.yml needs work"
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="inspec exec $aws_rds_postgres_9_stig_path -t aws:// --input-file $aws_rds_postgres_9_stig_path/attributes.yml --reporter=cli json:./results/aws_rds_postgres_9_stig_${date_stamp}.json"
   echo "running -> $cmd"
@@ -120,6 +120,15 @@ run_java_jre_8_stig(){
   set_target
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="inspec exec $java_jre_8_stig_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/java_jre_8_stig_${selected_env}_${date_stamp}.json"
+  echo "running -> $cmd"
+  $cmd
+}
+
+run_docker_ce_cis(){
+  # prompt for an ip address
+  set_target
+  date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
+  cmd="inspec exec $docker_ce_cis_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/docker_ce_cis_${selected_env}_${date_stamp}.json"
   echo "running -> $cmd"
   $cmd
 }
@@ -156,6 +165,7 @@ runner(){
     "red_hat_7_stig") run_red_hat_7_stig;;
     "red_hat_cve_scan") run_red_hat_cve_scan;;
     "java_jre_8_stig") run_java_jre_8_stig;;
+    "docker_ce_cis") run_docker_ce_cis;;
     "all") run_all;;
     "quit") exit 0;;
   esac
