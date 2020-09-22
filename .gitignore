@@ -3,6 +3,7 @@
 attributes.yml
 aws-rds-crunchy-data-postgresql-9-stig-baseline**
 aws-s3-baseline**
+aws-rds-infrastructure-cis-baseline**
 cms-ars-3.1-moderate-aws-foundations-cis-overlay**
 cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay**
 cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay**

@@ -24,12 +24,16 @@ PROFILES=(
 )
 aws_foundations_cis_path="./cms-ars-3.1-moderate-aws-foundations-cis-overlay"
 aws_s3_baseline_path="./aws-s3-baseline"
-aws_rds_infra_cis_path="./cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay"
+# aws_rds_infra_cis_path="./cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay" # overlay is broken
+aws_rds_infra_cis_path="./aws-rds-infrastructure-cis-baseline"
 aws_rds_postgres_9_stig_path="./cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay"
 red_hat_7_stig_path="./cms-ars-3.1-moderate-red-hat-enterprise-linux-7-stig-overlay"
 red_hat_cve_scan_path="./redhat-enterprise-linux-cve-vulnerability-scan-baseline"
 java_jre_8_stig_path="./oracle-java-runtime-environment-8-unix-stig-baseline"
 
+# globals
+selected_env=
+target=
 
 usage() {
   echo -e "Usage: $PROGNAME [-h|--help]\n"
@@ -50,9 +54,8 @@ _EOF_
 }
 
 # get an active ip
-get_ip_addr(){
+set_target(){
   local environments=(bfd-prod bfd-prod-sbx bfd-test prod-etl prod-sbx-etl test-etl mgmt mgmt-test)
-  selected_env="" # don't make this local
   
   PS3="Select an environment: "
   select e in "${environments[@]}"
@@ -76,7 +79,7 @@ get_ip_addr(){
   --query 'Reservations[].Instances[].[PrivateIpAddress,Tags[?Key==`Name`]| [0].Value]' \
   --output table | grep "$selected_env" | awk '{print $2}' | grep -v "None")
   do
-    echo "$ip"
+    target="$ip"
     break
   done
 }
@@ -85,6 +88,7 @@ get_ip_addr(){
 run_aws_foundations_cis(){
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="inspec exec $aws_foundations_cis_path -t aws:// --input-file $aws_foundations_cis_path/attributes.yml --reporter=cli json:./results/aws_foundations_cis_${date_stamp}.json"
+  echo "running $cmd"
   $cmd
 }
 
@@ -96,10 +100,10 @@ run_aws_s3_baseline(){
 }
 
 run_aws_rds_infra_cis(){
-  echo "WIP. attributes.yml needs work"
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
-  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --reporter=cli json:./results/aws_rds_infra_${date_stamp}.json"
-  echo "NOT RUNNING: $cmd"
+  cmd="inspec exec $aws_rds_infra_cis_path -t aws:// --input-file $aws_rds_infra_cis_path/attributes.yml --controls=aws-rds-baseline-4 --reporter=cli json:./results/aws_rds_infra_${date_stamp}.json"
+  echo "running -> $cmd"
+  $cmd
 }
 
 run_aws_rds_postgres_9_stig(){
@@ -111,7 +115,7 @@ run_aws_rds_postgres_9_stig(){
 
 run_red_hat_7_stig(){
   # prompt for an ip address
-  target=$(get_ip_addr)
+  set_target
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="sudo inspec exec $red_hat_7_stig_path --input-file $red_hat_7_stig_path/attributes.yml --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_7_stig_${selected_env}_${date_stamp}.json"
   $cmd
@@ -119,7 +123,7 @@ run_red_hat_7_stig(){
 
 run_red_hat_cve_scan(){
   # prompt for an ip address
-  target=$(get_ip_addr)
+  set_target
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="sudo inspec exec $red_hat_cve_scan_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/red_hat_cve_scan_${selected_env}_${date_stamp}.json"
   $cmd
@@ -127,7 +131,7 @@ run_red_hat_cve_scan(){
 
 run_java_jre_8_stig(){
   # prompt for an ip address
-  target=$(get_ip_addr)
+  set_target
   date_stamp=$(date -d "today" +"%Y-%m-%d-%H%M")
   cmd="sudo inspec exec $java_jre_8_stig_path --target=ssh://$target --user=$BFD_INSPEC_SSH_USER --sudo -i $BFD_INSPEC_SSH_KEY_PATH --reporter=cli json:./results/java_jre_8_stig_${selected_env}_${date_stamp}.json"
   $cmd

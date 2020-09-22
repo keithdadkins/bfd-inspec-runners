@@ -28,7 +28,8 @@ git clone git@github.com:keithdadkins/bfd-inspec-runners.git
 cd bfd-inspec-runners
 git clone git@github.com:mitre/aws-s3-baseline.git
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-aws-foundations-cis-overlay.git
-git clone git@github.com:CMSgov/cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay.git
+# git clone git@github.com:CMSgov/cms-ars-3.1-moderate-aws-rds-infrastructure-cis-overlay.git
+git@github.com:mitre/aws-rds-infrastructure-cis-baseline.git
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-red-hat-enterprise-linux-7-stig-overlay.git
 git clone git@github.com:CMSgov/redhat-enterprise-linux-cve-vulnerability-scan-baseline.git
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay.git
