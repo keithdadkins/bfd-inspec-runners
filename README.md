@@ -22,6 +22,8 @@ brew cask install chef/chef/inspec
 
 ## Setup runner directory
 
+./rhel_cve_vulnerability_scan_baseline
+
 
 ```bash
 git clone git@github.com:keithdadkins/bfd-inspec-runners.git
@@ -35,7 +37,7 @@ git clone git@github.com:CMSgov/redhat-enterprise-linux-cve-vulnerability-scan-b
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-aws-rds-crunchy-data-postgresql-9-stig-overlay.git
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-oracle-java-runtime-environment-8-unix-stig-overlay.git
 git clone git@github.com:CMSgov/inspec-profile-disa_stig-el7.git
-git clone git@github.com:CMSgov/cms-ars-3.1-moderate-oracle-java-runtime-environment-8-unix-stig-overlay.git
+git clone git@github.com:mitre/aws-rds-crunchy-data-postgresql-9-stig-baseline.git
 git clone git@github.com:mitre/oracle-java-runtime-environment-8-unix-stig-baseline.git
 git clone git@github.com:CMSgov/cms-ars-3.1-moderate-docker-ce-cis-overlay.git
 git clone git@github.com:mitre/docker-ce-cis-baseline.git
