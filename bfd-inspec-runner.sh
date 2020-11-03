@@ -68,7 +68,7 @@ set_target(){
       prod-etl|prod-sbx-etl|test-etl)
         selected_env="bfd-$e"; break
       ;;
-      mgmt-prod|mgmt-test)
+      mgmt|mgmt-test)
         selected_env="bfd-$e-jenkins"; break
       ;;
     esac
@@ -152,7 +152,7 @@ run_red_hat_cve_scan(){
 }
 
 run_all(){
-  echo "TODO: run each profile, for each environment, selecting first ip address"
+  echo "TODO: run each profile, for each environment, selecting first/random ip address"
 }
 
 # call the selected runner
